@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AnySMSClient</string>
+    <string name="user">Kundennummer:</string>
+    <string name="password">Passwort:</string>
+    <string name="absender">Absender\n(11 Zeichen oder 16 Ziffern\nkeine Leerstellen):</string>
+    <string name="gateway">Gateway:</string>
+    <string name="settings">Einstellungen</string>
+    <string name="send_sms">Abschicken</string>
+    <string name="save">Speichern</string>
+    <string name="reset">Zurücksetzen</string>
+    <string name="empfaenger">Empfänger:</string>
+    <string name="Nachricht">Nachricht:</string>
+    <string name="balance">Guthaben:</string>
+    <string name="not_connected">Nicht eingeloggt</string>
+    <string name="empty"></string>
+    <!-- URIs -->
+    <string name="uri_send_sms">https://www.any-sms.biz/gateway/send_sms.php?id=%1$s&amp;pass=%2$s&amp;gateway=%3$s&amp;text=%4$s&amp;nummer=%5$s&amp;absender=%6$s&amp;notify=1&amp;long=%7$s&amp;test=%8$s&amp;xml=1</string>
+    <string name="uri_check_balance">https://www.any-sms.biz/gateway/balance.php?id=%1$s&amp;pass=%2$s&amp;mode=get-balance&amp;account=%1$s&amp;xml=1</string>
+   
+    <!-- Errors send -->
+    <string name="error0">SMS wurde angenommen</string>
+    <string name="error1">Falscher Username oder Passwort</string>
+	<string name="error2">Falsche IP</string>
+	<string name="error3">Kein ausreichendes Guthaben Main-Account</string>
+	<string name="error4">Kein ausreichendes Guthaben Sub-Account</string>
+	<string name="error5">SMS konnte nicht angenommen / verschickt werden</string>
+	<string name="error6">Gateway in dieses Netz nicht verfügbar</string>
+	<string name="error9">SPAM-Sperre (Gleicher Text an die gleiche Nummer innerhalb von 3 Minuten)</string>
+	<string name="error18">Fehlende Preisangabe in der SMS (für Bewerbung von Premium-Nummern)</string>
+	
+	<string-array name="gateways">
+	    <item>21</item>
+    	<item>20</item>
+    </string-array>
+</resources>
