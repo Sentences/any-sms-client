@@ -14,10 +14,10 @@
     <string name="Nachricht">Nachricht:</string>
     <string name="balance">Guthaben:</string>
     <string name="not_connected">Nicht eingeloggt</string>
+    <string name="notify">Benachrichtigung? (siehe Einstellungen zum http Gateway auf der anySMS Homepage)</string>
     <string name="empty"></string>
     <!-- URIs -->
-    <string name="uri_send_sms">https://www.any-sms.biz/gateway/send_sms.php?id=%1$s&amp;pass=%2$s&amp;gateway=%3$s&amp;text=%4$s&amp;nummer=%5$s&amp;absender=%6$s&amp;notify=1&amp;long=%7$s&amp;test=%8$s&amp;xml=1</string>
-    <string name="uri_check_balance">https://www.any-sms.biz/gateway/balance.php?id=%1$s&amp;pass=%2$s&amp;mode=get-balance&amp;account=%1$s&amp;xml=1</string>
+    <string name="uri_send_sms">https://www.any-sms.biz/gateway/send_sms.php?id=%1$s&amp;pass=%2$s&amp;gateway=%3$s&amp;text=%4$s&amp;nummer=%5$s&amp;absender=%6$s&amp;notify=%7$s&amp;long=%8$s&amp;test=%9$s&amp;xml=1</string>
    
     <!-- Errors send -->
     <string name="error0">SMS wurde angenommen</string>

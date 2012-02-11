@@ -55,6 +55,12 @@
         android:layout_height="wrap_content"
         android:entries="@array/gateways" />
 
+    <CheckBox
+        android:id="@+id/cbNotify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/notify" />
+
     <Button
         android:id="@+id/btnSave"
         android:layout_width="wrap_content"
