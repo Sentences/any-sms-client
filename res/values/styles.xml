@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.MyActionBar" parent="style/Theme.Sherlock.Light">
+		<item name="abBackground">#FF405364</item>
+		<item name="actionMenuTextColor">#FFFFFFFF</item>
+	</style>
+	<color name="transparent">#00000000</color>  
+</resources>

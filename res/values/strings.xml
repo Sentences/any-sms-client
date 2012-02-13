@@ -14,6 +14,9 @@
     <string name="Nachricht">Nachricht:</string>
     <string name="balance">Guthaben:</string>
     <string name="not_connected">Nicht eingeloggt</string>
+    <string name="info">Info</string>
+    <string name="pls_add_message_and_receipient">Bitte einen Empfänger und ein Nachricht eingeben!</string>
+    <string name="copyright">&#169; by Nico Renken\nP&amp;P Software GmbH\n\nLicensed under LGPL.\nSource at https://code.google.com/p/any-sms-client</string>
     <string name="notify">Benachrichtigung? (siehe Einstellungen zum http Gateway auf der anySMS Homepage)</string>
     <string name="empty"></string>
     <!-- URIs -->

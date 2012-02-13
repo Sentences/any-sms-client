@@ -1,9 +1,14 @@
 package de.mxtracks.android.anySMS;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.ActionBar;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
 import android.util.Log;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -13,7 +18,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-public class Settings extends Activity implements OnClickListener,
+public class Settings extends FragmentActivity implements OnClickListener,
 		OnCheckedChangeListener {
 	public static final String PREFS_NAME = "MyPrefs";
 	public static final String TAG = "anySMS Settings";
@@ -23,7 +28,8 @@ public class Settings extends Activity implements OnClickListener,
 	private Spinner spGateway;
 	private Button btnSave;
 	private CheckBox cbNotify;
-
+	private ActionBar actionBar;
+	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
@@ -48,6 +54,12 @@ public class Settings extends Activity implements OnClickListener,
 		etPassword.setText(userPass);
 		etAbsender.setText(userAbsender);
 		cbNotify.setChecked(userNotify);
+		
+		actionBar = getSupportActionBar();
+		actionBar.setTitle("Zurück");
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setDisplayShowTitleEnabled(false);
+		
 	}
 
 	@Override
@@ -102,4 +114,19 @@ public class Settings extends Activity implements OnClickListener,
 		}
 	}
 
+	/* regiert auf klicks im Menü */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+            // app icon in action bar clicked; go home
+            Intent intent = new Intent(this, AnySMSClientActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+	
 }

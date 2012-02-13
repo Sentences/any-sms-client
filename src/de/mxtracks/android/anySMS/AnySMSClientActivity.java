@@ -19,7 +19,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.xmlpull.v1.XmlPullParser;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -34,13 +33,15 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Contacts;
+import android.support.v4.app.ActionBar;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.Menu;
+import android.support.v4.view.MenuItem;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Xml;
-import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -49,7 +50,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AnySMSClientActivity extends Activity implements OnClickListener {
+
+public class AnySMSClientActivity extends FragmentActivity implements OnClickListener {
 	public static final String PREFS_NAME = "MyPrefs";
 	private static final int PICK_CONTACT_RES = 1;
 	private static final String TAG = "AnySMS";
@@ -68,6 +70,7 @@ public class AnySMSClientActivity extends Activity implements OnClickListener {
 	private Boolean userNotify;
 	private Integer lastCheck;
 	private Integer timeStamp;
+	private ActionBar actionBar;
 	protected ProgressDialog smsSendDialog;
 
 	@Override
@@ -91,6 +94,10 @@ public class AnySMSClientActivity extends Activity implements OnClickListener {
 		btnSend.setEnabled(false);
 		btnReset.setOnClickListener(this);
 
+		actionBar = getSupportActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(false);
+		actionBar.setDisplayShowTitleEnabled(false);
+		
 		this.parseIntent(this.getIntent());
 
 	}
@@ -110,18 +117,37 @@ public class AnySMSClientActivity extends Activity implements OnClickListener {
 
 		timeStamp = (int) (System.currentTimeMillis() / 1000L);
 
-		if (userID != "" && lastCheck + 86400 < timeStamp) {
+		if ((userID.trim() != "") && (lastCheck + 86400 < timeStamp)) {
 			getBalance chk = new getBalance();
 			chk.execute(getString(R.string.uri_send_sms, userID, userPass,
 					userGateway, "", "", "", "", "", "1"));
 		}
 
+		if (userID.trim() != "" && userPass.trim() != "" && userAbsender.trim() != ""){
+			btnSend.setEnabled(true);
+		}
+		
+		
 		if (userBalance != "") {
 			tvBalance.setText(userBalance);
 			tvBalance.setTextColor(Color.GREEN);
 		}
 	}
 
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
+		savedInstanceState.putString("to", etEmpfaenger.getText().toString());
+		savedInstanceState.putString("message", etMessage.getText().toString());
+	}
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		etEmpfaenger.setText(savedInstanceState.getString("to"));
+		etMessage.setText(savedInstanceState.getString("message"));
+	}
+
+	
 	private class getBalance extends AsyncTask<String, Void, String> {
 		@Override
 		protected String doInBackground(String... Uri) {
@@ -412,7 +438,6 @@ public class AnySMSClientActivity extends Activity implements OnClickListener {
 				String nummer = etEmpfaenger.getText().toString();
 				etEmpfaenger.setText("");
 				etMessage.setText("");
-				btnSend.setEnabled(false);
 
 				// SMS ins Sent Folder packen
 				ContentValues values = new ContentValues();
@@ -445,7 +470,12 @@ public class AnySMSClientActivity extends Activity implements OnClickListener {
 					de.mxtracks.android.anySMS.Settings.class);
 			startActivity(setIntent);
 			return true;
-
+		case R.id.btnInfo:
+			/* ruft die infos activity auf */
+			final Intent infoIntent = new Intent(this,
+					de.mxtracks.android.anySMS.Info.class);
+			startActivity(infoIntent);
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -460,10 +490,9 @@ public class AnySMSClientActivity extends Activity implements OnClickListener {
 		case R.id.btnReset:
 			etEmpfaenger.setText("");
 			etMessage.setText("");
-			btnSend.setEnabled(false);
 			break;
 		case R.id.btnSend:
-			if (etMessage.getText().length() >= 1) {
+			if (etMessage.getText().length() >= 1 && etEmpfaenger.getText().length() >= 5) {
 				String message = etMessage.getText().toString();
 				try {
 					message = URLEncoder.encode(message, "ISO-8859-15");
@@ -471,7 +500,7 @@ public class AnySMSClientActivity extends Activity implements OnClickListener {
 					uee.getMessage();
 				}
 				String nummer = etEmpfaenger.getText().toString();
-				nummer = nummer.replace("+49", "0");
+				nummer = nummer.replace("+", "00");
 				nummer = nummer.replaceAll(" ", "");
 				String sLong = etMessage.getText().length() > 160 ? "1" : "0";
 				String sNotify = userNotify ? "1" : "0";
@@ -479,6 +508,9 @@ public class AnySMSClientActivity extends Activity implements OnClickListener {
 				sms.execute(getString(R.string.uri_send_sms, userID, userPass,
 						userGateway, message, nummer, userAbsender, sNotify,
 						sLong, "0"));
+			}
+			else {
+				Toast.makeText(this, getString(R.string.pls_add_message_and_receipient), Toast.LENGTH_SHORT).show();
 			}
 			break;
 		}
@@ -538,7 +570,6 @@ public class AnySMSClientActivity extends Activity implements OnClickListener {
 									String selectedNumber = items[item]
 											.toString();
 									etEmpfaenger.setText(selectedNumber);
-									btnSend.setEnabled(true);
 								}
 							});
 					AlertDialog alert = builder.create();
@@ -547,7 +578,6 @@ public class AnySMSClientActivity extends Activity implements OnClickListener {
 					} else {
 						String selectedNumber = phoneNumber.toString();
 						etEmpfaenger.setText(selectedNumber);
-						btnSend.setEnabled(true);
 					}
 					if (phoneNumber.length() == 0) {
 						Toast.makeText(AnySMSClientActivity.this,
@@ -613,7 +643,6 @@ public class AnySMSClientActivity extends Activity implements OnClickListener {
 					final String recipient = uri.getSchemeSpecificPart();
 					Log.i(TAG, "Recipient: " + recipient);
 					etEmpfaenger.setText(recipient);
-					btnSend.setEnabled(true);
 				}
 			}
 			String smsBody = intent.getStringExtra(Intent.EXTRA_TEXT);
