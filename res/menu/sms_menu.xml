@@ -2,11 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/btnSettings" 
         android:title="@string/settings" 
-        android:icon="@android:drawable/ic_menu_preferences"
+        android:icon="@drawable/ic_settings"
         android:showAsAction="always|withText"></item>
+    <item android:id="@+id/btnRefresh" 
+        android:title="@string/refresh" 
+        android:icon="@drawable/ic_refresh"
+        android:showAsAction="always"></item>
     <item android:id="@+id/btnInfo" 
         android:title="@string/info" 
-        android:icon="@android:drawable/ic_menu_info_details"
-        android:showAsAction="always|withText"></item>
+        android:icon="@drawable/ic_information"
+        android:showAsAction="always"></item>
 
 </menu>

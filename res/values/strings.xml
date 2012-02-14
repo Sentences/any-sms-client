@@ -3,6 +3,7 @@
 
     <string name="app_name">AnySMSClient</string>
     <string name="user">Kundennummer:</string>
+    <string name="version">Client Version: %1$s</string>
     <string name="password">Passwort:</string>
     <string name="absender">Absender\n(11 Zeichen oder 16 Ziffern\nkeine Leerstellen):</string>
     <string name="gateway">Gateway:</string>
@@ -15,8 +16,10 @@
     <string name="balance">Guthaben:</string>
     <string name="not_connected">Nicht eingeloggt</string>
     <string name="info">Info</string>
+    <string name="refresh">Aktualisieren</string>
+    <string name="set_user_pass">Bitte Benutzername, Passwort und Absender in den Einstellungen festlegen!</string>
     <string name="pls_add_message_and_receipient">Bitte einen Empfänger und ein Nachricht eingeben!</string>
-    <string name="copyright">&#169; by Nico Renken\nP&amp;P Software GmbH\n\nLicensed under LGPL.\nSource at https://code.google.com/p/any-sms-client</string>
+    <string name="copyright">&#169; by Nico Renken\nP&amp;P Software GmbH\nhttps://www.p-und-p.de\n\nLicensed under LGPL.\nSource at https://code.google.com/p/any-sms-client\n\nAny-sms gehört der Firma mesmo GmbH\nhttp://www.any-sms.info\nwelche weder mit der P&amp;P Software GmbH noch mit Nico Renken im Zusammenhang steht.</string>
     <string name="notify">Benachrichtigung? (siehe Einstellungen zum http Gateway auf der anySMS Homepage)</string>
     <string name="empty"></string>
     <!-- URIs -->

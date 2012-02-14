@@ -50,26 +50,18 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-public class AnySMSClientActivity extends FragmentActivity implements OnClickListener {
+public class AnySMSClientActivity extends FragmentActivity implements
+		OnClickListener {
 	public static final String PREFS_NAME = "MyPrefs";
 	private static final int PICK_CONTACT_RES = 1;
 	private static final String TAG = "AnySMS";
 	private ImageButton btnGetUser;
-	private Button btnSend;
-	private Button btnReset;
-	private TextView tvBalance;
-	private TextView tvMessageLength;
-	private EditText etEmpfaenger;
-	private EditText etMessage;
-	private String userID;
-	private String userPass;
-	private String userAbsender;
-	private String userGateway;
-	private String userBalance;
+	private Button btnSend, btnReset;
+	private TextView tvBalance, tvMessageLength;
+	private EditText etEmpfaenger, etMessage;
+	private String userID, userPass, userAbsender, userGateway, userBalance;
 	private Boolean userNotify;
-	private Integer lastCheck;
-	private Integer timeStamp;
+	private Integer lastCheck, timeStamp;
 	private ActionBar actionBar;
 	protected ProgressDialog smsSendDialog;
 
@@ -83,6 +75,7 @@ public class AnySMSClientActivity extends FragmentActivity implements OnClickLis
 		btnReset = (Button) this.findViewById(R.id.btnReset);
 
 		etEmpfaenger = (EditText) this.findViewById(R.id.et_empfaenger);
+		etEmpfaenger.addTextChangedListener(receipientLengthWatcher);
 		etMessage = (EditText) this.findViewById(R.id.editText1);
 		etMessage.addTextChangedListener(smsLengthWatcher);
 
@@ -97,7 +90,7 @@ public class AnySMSClientActivity extends FragmentActivity implements OnClickLis
 		actionBar = getSupportActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(false);
 		actionBar.setDisplayShowTitleEnabled(false);
-		
+
 		this.parseIntent(this.getIntent());
 
 	}
@@ -107,9 +100,9 @@ public class AnySMSClientActivity extends FragmentActivity implements OnClickLis
 		super.onResume();
 
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		userID = settings.getString("userID", "");
-		userPass = settings.getString("userPass", "");
-		userAbsender = settings.getString("userAbsender", "");
+		userID = settings.getString("userID", null);
+		userPass = settings.getString("userPass", null);
+		userAbsender = settings.getString("userAbsender", null);
 		userGateway = settings.getString("userGateway", "");
 		userBalance = settings.getString("userBalance", "");
 		lastCheck = settings.getInt("lastCheck", 0);
@@ -117,17 +110,13 @@ public class AnySMSClientActivity extends FragmentActivity implements OnClickLis
 
 		timeStamp = (int) (System.currentTimeMillis() / 1000L);
 
-		if ((userID.trim() != "") && (lastCheck + 86400 < timeStamp)) {
+		if ((userID != null) && (userPass != null) && (userAbsender != null)
+				&& (lastCheck + 86400 < timeStamp)) {
 			getBalance chk = new getBalance();
 			chk.execute(getString(R.string.uri_send_sms, userID, userPass,
 					userGateway, "", "", "", "", "", "1"));
 		}
 
-		if (userID.trim() != "" && userPass.trim() != "" && userAbsender.trim() != ""){
-			btnSend.setEnabled(true);
-		}
-		
-		
 		if (userBalance != "") {
 			tvBalance.setText(userBalance);
 			tvBalance.setTextColor(Color.GREEN);
@@ -140,6 +129,7 @@ public class AnySMSClientActivity extends FragmentActivity implements OnClickLis
 		savedInstanceState.putString("to", etEmpfaenger.getText().toString());
 		savedInstanceState.putString("message", etMessage.getText().toString());
 	}
+
 	@Override
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
@@ -147,7 +137,6 @@ public class AnySMSClientActivity extends FragmentActivity implements OnClickLis
 		etMessage.setText(savedInstanceState.getString("message"));
 	}
 
-	
 	private class getBalance extends AsyncTask<String, Void, String> {
 		@Override
 		protected String doInBackground(String... Uri) {
@@ -476,6 +465,18 @@ public class AnySMSClientActivity extends FragmentActivity implements OnClickLis
 					de.mxtracks.android.anySMS.Info.class);
 			startActivity(infoIntent);
 			return true;
+		case R.id.btnRefresh:
+			/* aktualisiert das Guthaben */
+			if ((userID != null) && (userPass != null)
+					&& (userAbsender != null)) {
+				getBalance chk = new getBalance();
+				chk.execute(getString(R.string.uri_send_sms, userID, userPass,
+						userGateway, "", "", "", "", "", "1"));
+			} else {
+				Toast.makeText(this, getString(R.string.set_user_pass),
+						Toast.LENGTH_SHORT).show();
+			}
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -492,7 +493,8 @@ public class AnySMSClientActivity extends FragmentActivity implements OnClickLis
 			etMessage.setText("");
 			break;
 		case R.id.btnSend:
-			if (etMessage.getText().length() >= 1 && etEmpfaenger.getText().length() >= 5) {
+			if (etMessage.getText().length() >= 1
+					&& etEmpfaenger.getText().length() >= 5) {
 				String message = etMessage.getText().toString();
 				try {
 					message = URLEncoder.encode(message, "ISO-8859-15");
@@ -502,15 +504,16 @@ public class AnySMSClientActivity extends FragmentActivity implements OnClickLis
 				String nummer = etEmpfaenger.getText().toString();
 				nummer = nummer.replace("+", "00");
 				nummer = nummer.replaceAll(" ", "");
-				String sLong = etMessage.getText().length() > 160 ? "1" : "0";
+				String sLong = etMessage.getText().length() > 159 ? "1" : "0";
 				String sNotify = userNotify ? "1" : "0";
 				sendSMS sms = new sendSMS();
 				sms.execute(getString(R.string.uri_send_sms, userID, userPass,
 						userGateway, message, nummer, userAbsender, sNotify,
 						sLong, "0"));
-			}
-			else {
-				Toast.makeText(this, getString(R.string.pls_add_message_and_receipient), Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(this,
+						getString(R.string.pls_add_message_and_receipient),
+						Toast.LENGTH_SHORT).show();
 			}
 			break;
 		}
@@ -569,6 +572,10 @@ public class AnySMSClientActivity extends FragmentActivity implements OnClickLis
 										int item) {
 									String selectedNumber = items[item]
 											.toString();
+									selectedNumber = selectedNumber.replace(
+											"+", "00");
+									selectedNumber = selectedNumber.replaceAll(
+											" ", "");
 									etEmpfaenger.setText(selectedNumber);
 								}
 							});
@@ -577,6 +584,8 @@ public class AnySMSClientActivity extends FragmentActivity implements OnClickLis
 						alert.show();
 					} else {
 						String selectedNumber = phoneNumber.toString();
+						selectedNumber = selectedNumber.replace("+", "00");
+						selectedNumber = selectedNumber.replaceAll(" ", "");
 						etEmpfaenger.setText(selectedNumber);
 					}
 					if (phoneNumber.length() == 0) {
@@ -594,6 +603,9 @@ public class AnySMSClientActivity extends FragmentActivity implements OnClickLis
 		}
 	}
 
+	/**
+	 * Zählt die länge der SMS
+	 */
 	private final TextWatcher smsLengthWatcher = new TextWatcher() {
 		@Override
 		public void beforeTextChanged(CharSequence s, int start, int count,
@@ -604,6 +616,42 @@ public class AnySMSClientActivity extends FragmentActivity implements OnClickLis
 		public void onTextChanged(CharSequence s, int start, int before,
 				int count) {
 			tvMessageLength.setText(String.valueOf(s.length()));
+			if ((userID != null) && (userPass != null)
+					&& (userAbsender != null) && (s.length() > 2)
+					&& (etEmpfaenger.getText().length() >= 8)) {
+				btnSend.setEnabled(true);
+			} else {
+				btnSend.setEnabled(false);
+			}
+
+		}
+
+		@Override
+		public void afterTextChanged(Editable s) {
+		}
+
+	};
+
+	/**
+	 * Zählt die länge des Empfängers
+	 */
+	private final TextWatcher receipientLengthWatcher = new TextWatcher() {
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+		}
+
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before,
+				int count) {
+			if ((userID != null) && (userPass != null)
+					&& (userAbsender != null) && (s.length() > 8)
+					&& (etMessage.getText().length() > 2)) {
+				btnSend.setEnabled(true);
+			} else {
+				btnSend.setEnabled(false);
+			}
+
 		}
 
 		@Override
@@ -640,8 +688,10 @@ public class AnySMSClientActivity extends FragmentActivity implements OnClickLis
 			final String scheme = uri.getScheme();
 			if (scheme != null) {
 				if (scheme.equals("sms") || scheme.equals("smsto")) {
-					final String recipient = uri.getSchemeSpecificPart();
+					String recipient = uri.getSchemeSpecificPart();
 					Log.i(TAG, "Recipient: " + recipient);
+					recipient = recipient.replace("+", "00");
+					recipient = recipient.replaceAll(" ", "");
 					etEmpfaenger.setText(recipient);
 				}
 			}

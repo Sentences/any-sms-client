@@ -5,10 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.util.Log;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -22,14 +20,12 @@ public class Settings extends FragmentActivity implements OnClickListener,
 		OnCheckedChangeListener {
 	public static final String PREFS_NAME = "MyPrefs";
 	public static final String TAG = "anySMS Settings";
-	private EditText etUser;
-	private EditText etPassword;
-	private EditText etAbsender;
+	private EditText etUser, etPassword, etAbsender;
 	private Spinner spGateway;
 	private Button btnSave;
 	private CheckBox cbNotify;
 	private ActionBar actionBar;
-	
+
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.settings);
@@ -47,34 +43,41 @@ public class Settings extends FragmentActivity implements OnClickListener,
 		String userID = settings.getString("userID", null);
 		String userPass = settings.getString("userPass", null);
 		String userAbsender = settings.getString("userAbsender", null);
+		String userGateway = settings.getString("userGateway", null);
 		Boolean userNotify = settings.getBoolean("userNotify", false);
+
+		if (userGateway.equalsIgnoreCase("20")) {
+			spGateway.setSelection(1, true);
+		}
 
 		btnSave.setOnClickListener(this);
 		etUser.setText(userID);
 		etPassword.setText(userPass);
 		etAbsender.setText(userAbsender);
 		cbNotify.setChecked(userNotify);
-		
+
 		actionBar = getSupportActionBar();
 		actionBar.setTitle("Zurück");
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setDisplayShowTitleEnabled(false);
-		
+
 	}
 
 	@Override
-	protected void onPause() {
+	protected void onStop() {
 		super.onStop();
-
-		// We need an Editor object to make preference changes.
-		// All objects are from android.context.Context
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("userID", etUser.getText().toString());
-		editor.putString("userPass", etPassword.getText().toString());
-		editor.putString("userAbsender", etAbsender.getText().toString());
+		String user = (etUser.getText().length() > 3) ? etUser.getText()
+				.toString() : null;
+		String pass = (etPassword.getText().length() > 3) ? etPassword
+				.getText().toString() : null;
+		String absender = (etAbsender.getText().length() > 3) ? etAbsender
+				.getText().toString() : null;
+		editor.putString("userID", user);
+		editor.putString("userPass", pass);
+		editor.putString("userAbsender", absender);
 		editor.putString("userGateway", spGateway.getSelectedItem().toString());
-		// Commit the edits!
 		editor.commit();
 	}
 
@@ -83,19 +86,21 @@ public class Settings extends FragmentActivity implements OnClickListener,
 		switch (v.getId()) {
 		case R.id.btnSave:
 			Log.i(TAG, "Save settings");
-			// We need an Editor object to make preference changes.
-			// All objects are from android.context.Context
 			SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 			SharedPreferences.Editor editor = settings.edit();
-			editor.putString("userID", etUser.getText().toString());
-			editor.putString("userPass", etPassword.getText().toString());
-			editor.putString("userAbsender", etAbsender.getText().toString());
+			String user = (etUser.getText().length() > 3) ? etUser.getText()
+					.toString() : null;
+			String pass = (etPassword.getText().length() > 3) ? etPassword
+					.getText().toString() : null;
+			String absender = (etAbsender.getText().length() > 3) ? etAbsender
+					.getText().toString() : null;
+			editor.putString("userID", user);
+			editor.putString("userPass", pass);
+			editor.putString("userAbsender", absender);
 			editor.putString("userGateway", spGateway.getSelectedItem()
 					.toString());
-			// Commit the edits!
 			editor.commit();
 			break;
-
 		}
 
 	}
@@ -119,14 +124,14 @@ public class Settings extends FragmentActivity implements OnClickListener,
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-            // app icon in action bar clicked; go home
-            Intent intent = new Intent(this, AnySMSClientActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            return true;
+			// app icon in action bar clicked; go home
+			Intent intent = new Intent(this, AnySMSClientActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 }
