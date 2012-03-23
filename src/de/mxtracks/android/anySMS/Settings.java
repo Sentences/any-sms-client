@@ -46,7 +46,7 @@ public class Settings extends FragmentActivity implements OnClickListener,
 		String userGateway = settings.getString("userGateway", null);
 		Boolean userNotify = settings.getBoolean("userNotify", false);
 
-		if (userGateway.equalsIgnoreCase("20")) {
+		if ((userGateway != null) && (userGateway.equalsIgnoreCase("20"))) {
 			spGateway.setSelection(1, true);
 		}
 
